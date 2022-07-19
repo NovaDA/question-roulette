@@ -1,0 +1,29 @@
+{
+  "name": "questions_roulette_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./scripts/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": " node ./scripts/index.js",
+    "dev": "nodemon ./scripts/index.js",
+    "test": "jest --silent --watchAll",
+    "coverage": "jest --coverage --silent"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "socket.io": "^4.5.1"
+  },
+  "devDependencies": {
+    "jest": "^28.1.1",
+    "jester": "^0.2.3",
+    "nodemon": "^2.0.16",
+    "supertest": "^6.2.3"
+  }
+}
