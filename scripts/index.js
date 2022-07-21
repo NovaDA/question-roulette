@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-const PORT = process.env.PORT || 5500;
+const PORT = process.env.PORT || 5001;
 
 const http = require("http");
 const { Server } = require("socket.io")
@@ -10,7 +10,7 @@ const { Server } = require("socket.io")
 const server = http.createServer(app);
 app.use(cors());
 
-server.listen(5001, () => console.log("Server is running"))
+server.listen(PORT, () => console.log("Server is running"))
 
 const io = new Server(server, {
     cors: {
