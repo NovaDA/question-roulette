@@ -10,7 +10,7 @@ const { Server } = require("socket.io")
 const server = http.createServer(app);
 app.use(cors());
 
-server.listen(PORT, () => console.log("Server is running"))
+server.listen(5001, () => console.log("Server is running"))
 
 const io = new Server(server, {
     cors: {
