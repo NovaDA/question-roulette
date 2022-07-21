@@ -7,65 +7,6 @@ const { Server } = require("socket.io")
 const server = http.createServer(app);
 app.use(cors());
 
-// Wheel Logic
-// let timer;
-// let duration = 0;
-// let maxTime = 0;
-// let actualRotation = 0;
-// let finalRotation = 0;
-
-
-// function Rotate(){
-//     let sec = 0;
-//     randomNumber('duration');
-//     randomNumber('maxTime');
-    
-//     timer = setInterval(() => {
-//         actualRotation += (duration - sec) / maxTime;
-//         actualRotation = Math.round(actualRotation % 360);
-//         sec++;
-//         //console.log(360 - actualRotation);
-//         finalRotation = 360 - actualRotation;
-//         if(sec >= duration){
-
-//             stop();
-//         }
-        
-//     }, maxTime)
-
-// }
-
-// function chooseOption(){
-//     if(actualRotation >= 0 && actualRotation < 61 ){
-//         console.log("RED");
-//     }else if(actualRotation >= 61 && actualRotation < 121){
-//         console.log("BLUE");
-//     }else if(actualRotation >= 121 && actualRotation < 181){
-//         console.log("PINK");
-//     }else if(actualRotation >= 181 && actualRotation < 241){
-//         console.log("GREEN");
-//     }else if(actualRotation >= 241 && actualRotation < 301){
-//         console.log("YELLOW");
-//     }else{
-//         console.log("CYAN");
-//     }
-   
-// }
-
-// function randomNumber(target){
-//     if(target === 'duration'){
-//         duration = Math.floor(Math.random() * 300) + 200;
-//     }else{
-//         maxTime = Math.floor(Math.random() * 20) + 10;
-//     }
-// }
-
-// function stop(){
-//     clearInterval(timer);
-//     chooseOption();
-// }
-
-
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:5000",
@@ -74,9 +15,11 @@ const io = new Server(server, {
 })
 
 let players = [];
-
 let playersCount = 0;
 let roomsAvailable = [];
+let searchSubject = "";
+let difficulty = "";
+
 
 io.on("connection", (socket) => {
     
@@ -88,19 +31,33 @@ io.on("connection", (socket) => {
     io.sockets.emit('rooms', (roomsAvailable));
 
     socket.on("join_room", (data) => {
+        console.log(socket.id + " Joined");
         let player = {};
         socket.join(data);
-        //playersCount++;
         player['id'] = socket.id;
         player['room'] = data;
         players.push(player);
         addRoom(data);
         io.to(data).emit('users', (getPlayersinTheRoom(data, players)));
         io.sockets.emit('rooms', (roomsAvailable));
+        io.sockets.emit("players", (players));  
     });
 
+
+    socket.on("quiz_page", (data) => {
+        io.sockets.emit("quiz_page_direction", (data));
+    })
+
+    socket.on("set_username", (data) => {    
+        updateUsername(data, socket.id);
+        socket.id = data;
+        console.log(players);
+    })
+
     socket.on('disconnect', () => {
-        console.log( "User Disconnected" + socket.id);
+        console.log( "User Disconnected " + socket.id);
+        players = deletePlayer(socket.id, players);
+        io.sockets.emit("players", (players));
         delete socket;
     })
 
@@ -112,7 +69,7 @@ io.on("connection", (socket) => {
         socket.to(data.room).emit("receive_message", data)
     });
 
-
+    io.sockets.emit("players", (players));
 
     function addRoom(data){
         try{
@@ -126,12 +83,33 @@ io.on("connection", (socket) => {
         } 
     }
 
-
-    function getPlayersinTheRoom(data, players){
-        
-        let playerNum = players.filter(p => p.room === data);
+    function getPlayersinTheRoom(data, allplayers){     
+        let playerNum = allplayers.filter(p => p.room === data);
         return playerNum.length;
+    }
 
+    function updateUsername(data, oldname){
+        for (const key of players) {
+            if(key.id === oldname){
+                key.id = data;
+
+            }
+        }
+    }
+
+    function getRoomNumberFromPlayer(id){
+        for (const key of players) {
+            if(key.id === id){
+                return key.room;
+            }
+        }
+
+        return 0;
+    }
+
+    function deletePlayer(data, allplayers){
+        let newPlayers = allplayers.filter(p => p.id !== data);
+        return newPlayers;
     }
 
 })
