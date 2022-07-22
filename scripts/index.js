@@ -40,6 +40,11 @@ io.on("connection", (socket) => {
         io.sockets.emit("players", (players));  
     });
 
+    socket.io("get-updates", ()=> {
+        io.sockets.emit('rooms', (roomsAvailable));
+        io.sockets.emit("players", (players));  
+    } )
+
 
     socket.on("quiz_page", (data) => {
         io.sockets.emit("quiz_page_direction", (data));
