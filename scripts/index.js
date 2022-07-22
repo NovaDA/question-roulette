@@ -14,7 +14,7 @@ server.listen(PORT, () => console.log("Server is running"))
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5000",
+        origin: "https://question-roulette.netlify.app/",
         methods: ["GET", "POST"],
     },
 })
@@ -22,17 +22,9 @@ const io = new Server(server, {
 let players = [];
 let playersCount = 0;
 let roomsAvailable = [];
-let searchSubject = "";
-let difficulty = "";
-
 
 io.on("connection", (socket) => {
     
-    // socket.on('newPlayer', data =>{
-    //     console.log("New client connected, with id: " + socket.id);
-    //     players[socket.id] = data;
-    // })
-
     io.sockets.emit('rooms', (roomsAvailable));
 
     socket.on("join_room", (data) => {
@@ -60,7 +52,6 @@ io.on("connection", (socket) => {
     })
 
     socket.on('disconnect', () => {
-        console.log( "User Disconnected " + socket.id);
         players = deletePlayer(socket.id, players);
         io.sockets.emit("players", (players));
         delete socket;
