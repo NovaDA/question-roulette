@@ -28,7 +28,6 @@ io.on("connection", (socket) => {
     io.sockets.emit('rooms', (roomsAvailable));
 
     socket.on("join_room", (data) => {
-        console.log(socket.id + " Joined");
         let player = {};
         socket.join(data);
         player['id'] = socket.id;
@@ -57,7 +56,6 @@ io.on("connection", (socket) => {
     })
 
     socket.on('disconnect', () => {
-        console.log( "User Disconnected " + socket.id);
         players = deletePlayer(socket.id, players);
         io.sockets.emit("players", (players));
         delete socket;
