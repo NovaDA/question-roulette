@@ -40,7 +40,7 @@ io.on("connection", (socket) => {
         io.sockets.emit("players", (players));  
     });
 
-    socket.io("get-updates", ()=> {
+    socket.on("get-updates", ()=> {
         io.sockets.emit('rooms', (roomsAvailable));
         io.sockets.emit("players", (players));  
     } )
