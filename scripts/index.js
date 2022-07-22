@@ -14,7 +14,7 @@ server.listen(PORT, () => console.log("Server is running"))
 
 const io = new Server(server, {
     cors: {
-        origin: "https://question-roulette.netlify.app/",
+        origin: "https://question-roulette.netlify.app",
         methods: ["GET", "POST"],
     },
 })
@@ -52,6 +52,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on('disconnect', () => {
+        console.log( "User Disconnected " + socket.id);
         players = deletePlayer(socket.id, players);
         io.sockets.emit("players", (players));
         delete socket;
